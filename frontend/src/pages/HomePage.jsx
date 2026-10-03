@@ -1,0 +1,99 @@
+import React from "react";
+import { Link } from "react-router-dom";
+
+const benefits = [
+  {
+    number: "01",
+    title: "Todo en un lugar",
+    body: "Consulta equipos, solicitudes y material de apoyo desde una plataforma compartida.",
+  },
+  {
+    number: "02",
+    title: "Disponibilidad clara",
+    body: "Conoce quÃ© recursos puedes solicitar para tus actividades acadÃ©micas.",
+  },
+  {
+    number: "03",
+    title: "Mejor seguimiento",
+    body: "MantÃ©n un historial ordenado de prÃ©stamos y del estado de cada equipo.",
+  },
+];
+
+export function HomePage() {
+
+  return (
+    <>
+      <section className="hero container">
+        <div className="hero-copy">
+          <span className="eyebrow">
+            <span className="eyebrow-dot" /> Recursos para crear, enseÃ±ar y
+            aprender
+          </span>
+          <h1>
+            El equipo que necesitas, <em>cuando lo necesitas.</em>
+          </h1>
+          <p>
+            Un espacio para organizar el prÃ©stamo de cÃ¡maras, micrÃ³fonos y otros
+            recursos audiovisuales de la UAO. Menos incertidumbre, mÃ¡s tiempo
+            para tus proyectos.
+          </p>
+          <div className="actions">
+            <Link className="button button-primary" to="#beneficios">
+              Conocer beneficios <span aria-hidden="true">â†—</span>
+            </Link>
+            <Link className="button button-outline" to="#beneficios">
+              Continuar
+            </Link>
+          </div>
+          <p className="hero-note">Una base para organizar los recursos audiovisuales de la UAO.</p>
+        </div>
+        <div className="hero-art" aria-hidden="true">
+          <div className="art-grid" />
+          <div className="art-ring art-ring-one" />
+          <div className="art-ring art-ring-two" />
+          <div className="art-center">
+            <div className="art-lens">
+              <div />
+            </div>
+          </div>
+          <div className="art-tag art-tag-top">
+            EQUIPOS MULTIMEDIA <span>â†—</span>
+          </div>
+          <div className="art-tag art-tag-bottom">
+            <span className="status-dot" /> ORGANIZACIÃ“N MÃS SIMPLE
+          </div>
+        </div>
+      </section>
+      <section id="beneficios" className="benefits-section">
+        <div className="container">
+          <div className="section-heading">
+            <span className="eyebrow">Â¿POR QUÃ‰ ESTA PLATAFORMA?</span>
+            <h2>Recursos listos para tus ideas.</h2>
+            <p>
+              La informaciÃ³n del inventario y las solicitudes se organiza en un
+              mismo lugar para facilitar el trabajo de toda la comunidad.
+            </p>
+          </div>
+          <div className="benefits-grid">
+            {benefits.map((benefit) => (
+              <article className="benefit" key={benefit.number}>
+                <span className="benefit-number">{benefit.number}</span>
+                <h3>{benefit.title}</h3>
+                <p>{benefit.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="container final-cta">
+        <div>
+          <span className="eyebrow">EMPIEZA AQUÃ</span>
+          <h2>Tu prÃ³ximo proyecto comienza con los recursos adecuados.</h2>
+        </div>
+        <Link className="button button-light" to="#beneficios">
+          Ver beneficios <span aria-hidden="true">â†—</span>
+        </Link>
+      </section>
+    </>
+  );
+}
