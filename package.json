@@ -8,7 +8,10 @@
     "backend": "npm run dev --workspace backend",
     "frontend": "npm run dev --workspace frontend",
     "build": "npm run build --workspace frontend",
-    "db:init": "node database/init.js"
+    "db:init": "node database/init.js",
+    "health:check": "node scripts/check-health.mjs"
   },
-  "devDependencies": { "concurrently": "^9.2.1" }
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
 }

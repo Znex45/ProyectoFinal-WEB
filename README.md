@@ -1,50 +1,12 @@
 # Sistema web de préstamos de equipos multimedia — UAO
 
-## Estado Andy — base del proyecto
+## Estado después de ELAM — conexión y comprobación de salud
 
-Esta etapa contiene la base de una aplicación web con React, Vite y Express. Incluye una landing pública adaptable, navegación de inicio y un servidor API básico. Todavía no incluye base de datos, autenticación, inventario ni solicitudes.
+Esta etapa parte del modelo MySQL incorporado por SERGIO. El backend usa variables de entorno, conecta con MySQL y ofrece `GET /health`. La landing consulta el endpoint y muestra si el servicio y la base están disponibles. Los formularios de acceso y registro se incorporarán en el siguiente avance; aquí todavía no hay autenticación ni CRUD.
 
-## Requisitos
+## Instalación y configuración
 
-- Node.js 20.19+ o 22.12+ (24 también funciona).
-- npm.
-
-## Instalación y ejecución
-
-Desde la raíz del proyecto:
-
-```bash
-npm install
-npm run dev
-```
-
-El frontend y el backend se ejecutan juntos. También pueden iniciarse por separado con `npm run frontend` y `npm run backend`. La landing está disponible en la dirección local que indique Vite; la API base usa el puerto 3001 y responde en `/`.
-
-Para compilar el frontend:
-
-```bash
-npm run build
-```
-
-## Estructura
-
-- `frontend/`: React, Vite, landing y estilos.
-- `backend/`: servidor Express inicial.
-
-Las siguientes etapas incorporarán el modelo de base de datos, la comprobación de conexión y las pantallas públicas de acceso y registro.
-
-## Aporte de Sergio — modelo MySQL
-
-Sobre la base de Andy se agregan el modelo de datos y su inicialización:
-
-- `database/schema.sql`: tablas, relaciones y restricciones para roles, usuarios, categorías, equipos, solicitudes, detalles y metadatos de archivos.
-- `database/seed.sql`: catálogos iniciales de roles, estados y categorías; no crea usuarios ni contraseñas.
-- `database/init.js`: inicializador disponible mediante el nuevo comando `npm run db:init` en `package.json`.
-- `docs/Modelo ER.uxf` y `docs/migracion-desde-escritorio.md`: diagrama y decisiones del modelo de datos.
-
-### Inicialización de la base de datos
-
-Con MySQL 8 iniciado, crea localmente `backend/.env` con los datos de tu instalación:
+Se requiere Node.js 20.19+ o 22.12+ y npm. Ejecuta `npm install` desde la raíz. Crea localmente `backend/.env`:
 
 ```text
 DB_HOST=localhost
@@ -52,14 +14,20 @@ DB_PORT=3306
 DB_USER=tu_usuario
 DB_PASSWORD=tu_contraseña
 DB_NAME=prestamos_uao_web
+PORT=3001
+FRONTEND_ORIGIN=http://localhost:5173
 ```
 
-Usa una base nueva y dedicada al proyecto web. No subas `.env` ni credenciales a GitHub.
+Crea localmente `frontend/.env`:
 
-Desde la raíz del proyecto ejecuta:
-
-```bash
-npm run db:init
+```text
+VITE_API_URL=http://localhost:3001
 ```
 
-El comando crea la base si no existe, aplica el esquema y carga los catálogos. La aplicación conserva los comandos de ejecución anteriores. Esta etapa aún no implementa `/health`, autenticación, CRUD, préstamos ni subida de archivos desde la web.
+Ajusta los valores a tu entorno. NO SUBIR ARCHIVOS `.env` A GITHUB. Inicializa la base con `npm run db:init` y luego inicia ambos servicios con `npm run dev`.
+
+## Comprobación
+
+Con MySQL iniciado, `GET http://localhost:3001/health` debe responder HTTP 200 y `{"status":"ok","database":"connected"}`. Si MySQL no está disponible, responde HTTP 503. También puedes ejecutar `npm run health:check` con la configuración local completa.
+
+El frontend muestra el estado de la consulta en la landing. El login, registro, inventario y solicitudes aún no son funcionales en esta etapa.
