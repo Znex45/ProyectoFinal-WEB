@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { fetchHealth } from "../services/api.js";
 
 const benefits = [
@@ -21,24 +22,12 @@ const benefits = [
 ];
 
 export function HomePage() {
-  const [apiStatus, setApiStatus] = useState("Verificando servicio...");
+  const [apiStatus, setApiStatus] = useState("Comprobando servicio…");
 
   useEffect(() => {
-    async function checkHealth() {
-      try {
-        const data = await fetchHealth();
-
-        if (data.status === "ok" && data.database === "connected") {
-          setApiStatus("Servicio y base de datos disponibles");
-        } else {
-          setApiStatus("Servicio disponible, base de datos no conectada");
-        }
-      } catch (error) {
-        setApiStatus("Servicio no disponible");
-      }
-    }
-
-    checkHealth();
+    fetchHealth()
+      .then(() => setApiStatus("Servicio y base de datos disponibles"))
+      .catch(() => setApiStatus("Servicio en preparación"));
   }, []);
 
   return (
@@ -49,67 +38,54 @@ export function HomePage() {
             <span className="eyebrow-dot" /> Recursos para crear, enseñar y
             aprender
           </span>
-
           <h1>
             El equipo que necesitas, <em>cuando lo necesitas.</em>
           </h1>
-
           <p>
             Un espacio para organizar el préstamo de cámaras, micrófonos y otros
             recursos audiovisuales de la UAO. Menos incertidumbre, más tiempo
             para tus proyectos.
           </p>
-
           <div className="actions">
-            <Link className="button button-primary" to="#beneficios">
-              Conocer beneficios <span aria-hidden="true">↗</span>
+            <Link className="button button-primary" to="/registro">
+              Crear una cuenta <span aria-hidden="true">↗</span>
             </Link>
-
-            <Link className="button button-outline" to="#beneficios">
-              Continuar
+            <Link className="button button-outline" to="/login">
+              Ya tengo cuenta
             </Link>
           </div>
-
           <p className="hero-note">
             Para estudiantes, docentes y encargados de los equipos. ·{" "}
             {apiStatus}
           </p>
         </div>
-
         <div className="hero-art" aria-hidden="true">
           <div className="art-grid" />
           <div className="art-ring art-ring-one" />
           <div className="art-ring art-ring-two" />
-
           <div className="art-center">
             <div className="art-lens">
               <div />
             </div>
           </div>
-
           <div className="art-tag art-tag-top">
             EQUIPOS MULTIMEDIA <span>↗</span>
           </div>
-
           <div className="art-tag art-tag-bottom">
             <span className="status-dot" /> ORGANIZACIÓN MÁS SIMPLE
           </div>
         </div>
       </section>
-
-      <section id="beneficios" className="benefits-section">
+      <section className="benefits-section">
         <div className="container">
           <div className="section-heading">
             <span className="eyebrow">¿POR QUÉ ESTA PLATAFORMA?</span>
-
             <h2>Recursos listos para tus ideas.</h2>
-
             <p>
               La información del inventario y las solicitudes se organiza en un
               mismo lugar para facilitar el trabajo de toda la comunidad.
             </p>
           </div>
-
           <div className="benefits-grid">
             {benefits.map((benefit) => (
               <article className="benefit" key={benefit.number}>
@@ -121,15 +97,13 @@ export function HomePage() {
           </div>
         </div>
       </section>
-
       <section className="container final-cta">
         <div>
           <span className="eyebrow">EMPIEZA AQUÍ</span>
           <h2>Tu próximo proyecto comienza con los recursos adecuados.</h2>
         </div>
-
-        <Link className="button button-light" to="#beneficios">
-          Ver beneficios <span aria-hidden="true">↗</span>
+        <Link className="button button-light" to="/registro">
+          Registrarme <span aria-hidden="true">↗</span>
         </Link>
       </section>
     </>
