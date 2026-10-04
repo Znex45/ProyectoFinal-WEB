@@ -1,50 +1,30 @@
-# Sistema web de préstamos de equipos multimedia — UAO
+# Sistema Web de Gestión de Préstamos de Equipos Multimedia y Audiovisuales — UAO
 
-## Estado Andy — base del proyecto
+Aplicación web para organizar el préstamo de cámaras, micrófonos, trípodes, luces y otros recursos de apoyo académico. La versión actual entrega la base técnica y visual: landing, formularios públicos maquetados, modelo MySQL e indicador de conexión del servicio. Los formularios y las operaciones de préstamo aún no persisten información.
 
-Esta etapa contiene la base de una aplicación web con React, Vite y Express. Incluye una landing pública adaptable, navegación de inicio y un servidor API básico. Todavía no incluye base de datos, autenticación, inventario ni solicitudes.
+## Arquitectura y tecnologías
+
+- **Frontend:** React, Vite, React Router, JavaScript y CSS.
+- **Backend:** Node.js, Express, `mysql2`, CORS y `dotenv`.
+- **Base de datos:** MySQL 8, SQL explícito sin ORM.
+
+El frontend consulta la API REST. `GET /health` ejecuta `SELECT 1` contra MySQL y responde con el estado de la conexión. El esquema y los catálogos están en `database/`; el diagrama E/R y las decisiones de migración están en `docs/`.
 
 ## Requisitos
 
 - Node.js 20.19+ o 22.12+ (24 también funciona).
 - npm.
+- MySQL 8 para inicializar la base y consultar `/health`.
 
-## Instalación y ejecución
+## Instalación y configuración
 
 Desde la raíz del proyecto:
 
 ```bash
 npm install
-npm run dev
 ```
 
-El frontend y el backend se ejecutan juntos. También pueden iniciarse por separado con `npm run frontend` y `npm run backend`. La landing está disponible en la dirección local que indique Vite; la API base usa el puerto 3001 y responde en `/`.
-
-Para compilar el frontend:
-
-```bash
-npm run build
-```
-
-## Estructura
-
-- `frontend/`: React, Vite, landing y estilos.
-- `backend/`: servidor Express inicial.
-
-Las siguientes etapas incorporarán el modelo de base de datos, la comprobación de conexión y las pantallas públicas de acceso y registro.
-
-## Aporte de Sergio — modelo MySQL
-
-Sobre la base de Andy se agregan el modelo de datos y su inicialización:
-
-- `database/schema.sql`: tablas, relaciones y restricciones para roles, usuarios, categorías, equipos, solicitudes, detalles y metadatos de archivos.
-- `database/seed.sql`: catálogos iniciales de roles, estados y categorías; no crea usuarios ni contraseñas.
-- `database/init.js`: inicializador disponible mediante el nuevo comando `npm run db:init` en `package.json`.
-- `docs/Modelo ER.uxf` y `docs/migracion-desde-escritorio.md`: diagrama y decisiones del modelo de datos.
-
-### Inicialización de la base de datos
-
-Con MySQL 8 iniciado, crea localmente `backend/.env` con los datos de tu instalación:
+Crea localmente `backend/.env` con los datos de tu servidor MySQL:
 
 ```text
 DB_HOST=localhost
@@ -52,14 +32,50 @@ DB_PORT=3306
 DB_USER=tu_usuario
 DB_PASSWORD=tu_contraseña
 DB_NAME=prestamos_uao_web
+PORT=3001
+FRONTEND_ORIGIN=http://localhost:5173
 ```
 
-Usa una base nueva y dedicada al proyecto web. No subas `.env` ni credenciales a GitHub.
+Crea localmente `frontend/.env`:
 
-Desde la raíz del proyecto ejecuta:
+```text
+VITE_API_URL=http://localhost:3001
+```
+
+Ajusta estos valores a tu entorno. **NO SUBIR ARCHIVOS `.env` A GITHUB.** `.gitignore` ya los excluye.
+
+## Base de datos
+
+Con MySQL iniciado y `backend/.env` configurado, ejecuta:
 
 ```bash
 npm run db:init
 ```
 
-El comando crea la base si no existe, aplica el esquema y carga los catálogos. La aplicación conserva los comandos de ejecución anteriores. Esta etapa aún no implementa `/health`, autenticación, CRUD, préstamos ni subida de archivos desde la web.
+El comando crea la base indicada por `DB_NAME` si no existe, aplica `database/schema.sql` y carga `database/seed.sql`. Usa una base dedicada a esta aplicación. No crea cuentas ni contraseñas.
+
+## Ejecución
+
+Inicia frontend y backend juntos:
+
+```bash
+npm run dev
+```
+
+También puedes usar terminales separadas con `npm run backend` y `npm run frontend`. Vite informa la dirección local del frontend; el backend usa el puerto `3001` por defecto.
+
+Rutas públicas: `/`, `/login` y `/registro`. Login y registro son formularios de demostración con validación del navegador; no envían datos ni crean cuentas.
+
+## Comprobar la API
+
+Con backend y MySQL disponibles, consulta:
+
+```text
+http://localhost:3001/health
+```
+
+Respuesta esperada: HTTP 200 con `{"status":"ok","database":"connected"}`. Si MySQL no está disponible, responde HTTP 503. La landing muestra el estado del servicio. También existe `npm run health:check`, que requiere configuración válida de base de datos.
+
+## Alcance actual
+
+El esquema contempla roles, usuarios, equipos, solicitudes, detalles y metadatos de archivos. En esta copia no están implementados la autenticación funcional, rutas privadas, CRUD, flujo de préstamos ni la subida y almacenamiento de archivos. Esas capacidades requieren desarrollo posterior.
