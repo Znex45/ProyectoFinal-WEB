@@ -1,18 +1,33 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export function RegisterPage() {
-  function handleSubmit(event) {
+  const { register } = useAuth();
+  const navigate = useNavigate();
+
+  async function handleSubmit(event) {
     event.preventDefault();
     const form = event.currentTarget;
     const password = form.elements.password;
     const confirmation = form.elements.confirmPassword;
+    const passwordsMatch = password.value === confirmation.value;
     confirmation.setCustomValidity(
-      password.value === confirmation.value
-        ? ""
-        : "Las contraseñas no coinciden.",
+      passwordsMatch ? "" : "Las contraseñas no coinciden.",
     );
-    form.reportValidity();
+    if (!form.reportValidity() || !passwordsMatch) return;
+
+    await register({
+      codigo: form.elements.code.value,
+      nombres: form.elements.firstName.value,
+      apellidos: form.elements.lastName.value,
+      correo: form.elements.email.value,
+      password: form.elements.password.value,
+    });
+    navigate("/login", {
+      replace: true,
+      state: { notice: "Cuenta creada correctamente. Ya puedes iniciar sesión." },
+    });
   }
 
   return (
@@ -105,9 +120,6 @@ export function RegisterPage() {
           <button className="button button-primary form-submit" type="submit">
             Crear cuenta <span aria-hidden="true">↗</span>
           </button>
-          <p className="form-note" role="status">
-            El registro de usuarios se habilitará en el Avance 2.
-          </p>
         </form>
         <p className="form-switch">
           ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
