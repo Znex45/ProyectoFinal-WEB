@@ -86,6 +86,23 @@ main {
 .nav-cta:hover {
   background: #e8f3ef;
 }
+.site-header nav .nav-logout {
+  color: inherit;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+}
+.site-header nav .nav-logout:hover {
+  color: #0f766b;
+}
+.nav-error {
+  position: absolute;
+  top: 64px;
+  right: 32px;
+  z-index: 1;
+}
 .site-footer {
   width: min(1240px, calc(100% - 64px));
   margin: auto;
@@ -475,6 +492,24 @@ main {
 .form-switch a {
   color: #0d756b;
   font-weight: 800;
+}
+.dashboard-page {
+  padding-block: 72px 96px;
+}
+.dashboard-page h1 {
+  font-family: Manrope, Arial, sans-serif;
+  font-size: clamp(36px, 4vw, 52px);
+  letter-spacing: -0.045em;
+  margin: 14px 0 8px;
+}
+.dashboard-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 32px;
+}
+.dashboard-logout {
+  margin-top: 28px;
 }
 @media (max-width: 860px) {
   .hero {
