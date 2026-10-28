@@ -1,18 +1,45 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export function RegisterPage() {
-  function handleSubmit(event) {
+  const { register } = useAuth();
+  const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(event) {
     event.preventDefault();
     const form = event.currentTarget;
     const password = form.elements.password;
     const confirmation = form.elements.confirmPassword;
+    const passwordsMatch = password.value === confirmation.value;
     confirmation.setCustomValidity(
-      password.value === confirmation.value
-        ? ""
-        : "Las contraseñas no coinciden.",
+      passwordsMatch ? "" : "Las contraseñas no coinciden.",
     );
-    form.reportValidity();
+    if (!form.reportValidity() || !passwordsMatch) return;
+
+    setError("");
+    setBusy(true);
+    try {
+      await register({
+        codigo: form.elements.code.value,
+        nombres: form.elements.firstName.value,
+        apellidos: form.elements.lastName.value,
+        correo: form.elements.email.value,
+        password: form.elements.password.value,
+      });
+      navigate("/login", {
+        replace: true,
+        state: { notice: "Cuenta creada correctamente. Ya puedes iniciar sesión." },
+      });
+    } catch (requestError) {
+      setError(requestError.message || "No fue posible crear la cuenta.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -102,11 +129,11 @@ export function RegisterPage() {
               />
             </div>
           </div>
-          <button className="button button-primary form-submit" type="submit">
-            Crear cuenta <span aria-hidden="true">↗</span>
+          <button className="button button-primary form-submit" type="submit" disabled={busy}>
+            {busy ? "Creando cuenta…" : "Crear cuenta"} <span aria-hidden="true">↗</span>
           </button>
-          <p className="form-note" role="status">
-            El registro de usuarios se habilitará en el Avance 2.
+          <p className="form-note" role={error ? "alert" : "status"}>
+            {error || (busy ? "Enviando tus datos…" : "")}
           </p>
         </form>
         <p className="form-switch">
