@@ -1,16 +1,10 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
+import { Link } from "react-router-dom";
 
 export function LoginPage() {
-  const { login } = useAuth();
-  const navigate = useNavigate();
-
-  async function handleSubmit(event) {
+  function handleSubmit(event) {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    await login(String(formData.get("email") || "").trim(), String(formData.get("password") || ""));
-    navigate("/dashboard");
+    event.currentTarget.reportValidity();
   }
 
   return (
@@ -54,6 +48,9 @@ export function LoginPage() {
           <button className="button button-primary form-submit" type="submit">
             Ingresar <span aria-hidden="true">↗</span>
           </button>
+          <p className="form-note" role="status">
+            El inicio de sesión se habilitará en el Avance 2.
+          </p>
         </form>
         <p className="form-switch">
           ¿Aún no tienes cuenta? <Link to="/registro">Regístrate</Link>
