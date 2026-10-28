@@ -1,16 +1,32 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    await login(String(formData.get("email") || "").trim(), String(formData.get("password") || ""));
-    navigate("/dashboard");
+    const correo = String(formData.get("email") || "").trim();
+    const password = String(formData.get("password") || "");
+
+    setError("");
+    setBusy(true);
+    try {
+      await login(correo, password);
+      navigate("/dashboard");
+    } catch (requestError) {
+      setError(requestError.message || "No fue posible iniciar sesión.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -51,9 +67,12 @@ export function LoginPage() {
             required
             minLength="8"
           />
-          <button className="button button-primary form-submit" type="submit">
-            Ingresar <span aria-hidden="true">↗</span>
+          <button className="button button-primary form-submit" type="submit" disabled={busy}>
+            {busy ? "Ingresando…" : "Ingresar"} <span aria-hidden="true">↗</span>
           </button>
+          <p className="form-note" role={error ? "alert" : "status"}>
+            {error || (busy ? "Verificando credenciales…" : location.state?.notice || "")}
+          </p>
         </form>
         <p className="form-switch">
           ¿Aún no tienes cuenta? <Link to="/registro">Regístrate</Link>

@@ -1,10 +1,14 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -17,17 +21,25 @@ export function RegisterPage() {
     );
     if (!form.reportValidity() || !passwordsMatch) return;
 
-    await register({
-      codigo: form.elements.code.value,
-      nombres: form.elements.firstName.value,
-      apellidos: form.elements.lastName.value,
-      correo: form.elements.email.value,
-      password: form.elements.password.value,
-    });
-    navigate("/login", {
-      replace: true,
-      state: { notice: "Cuenta creada correctamente. Ya puedes iniciar sesión." },
-    });
+    setError("");
+    setBusy(true);
+    try {
+      await register({
+        codigo: form.elements.code.value,
+        nombres: form.elements.firstName.value,
+        apellidos: form.elements.lastName.value,
+        correo: form.elements.email.value,
+        password: form.elements.password.value,
+      });
+      navigate("/login", {
+        replace: true,
+        state: { notice: "Cuenta creada correctamente. Ya puedes iniciar sesión." },
+      });
+    } catch (requestError) {
+      setError(requestError.message || "No fue posible crear la cuenta.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -117,9 +129,12 @@ export function RegisterPage() {
               />
             </div>
           </div>
-          <button className="button button-primary form-submit" type="submit">
-            Crear cuenta <span aria-hidden="true">↗</span>
+          <button className="button button-primary form-submit" type="submit" disabled={busy}>
+            {busy ? "Creando cuenta…" : "Crear cuenta"} <span aria-hidden="true">↗</span>
           </button>
+          <p className="form-note" role={error ? "alert" : "status"}>
+            {error || (busy ? "Enviando tus datos…" : "")}
+          </p>
         </form>
         <p className="form-switch">
           ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
