@@ -1,10 +1,32 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export function LoginPage() {
-  function handleSubmit(event) {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(event) {
     event.preventDefault();
-    event.currentTarget.reportValidity();
+    const formData = new FormData(event.currentTarget);
+    const correo = String(formData.get("email") || "").trim();
+    const password = String(formData.get("password") || "");
+
+    setError("");
+    setBusy(true);
+    try {
+      await login(correo, password);
+      navigate("/dashboard");
+    } catch (requestError) {
+      setError(requestError.message || "No fue posible iniciar sesión.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -45,11 +67,11 @@ export function LoginPage() {
             required
             minLength="8"
           />
-          <button className="button button-primary form-submit" type="submit">
-            Ingresar <span aria-hidden="true">↗</span>
+          <button className="button button-primary form-submit" type="submit" disabled={busy}>
+            {busy ? "Ingresando…" : "Ingresar"} <span aria-hidden="true">↗</span>
           </button>
-          <p className="form-note" role="status">
-            El inicio de sesión se habilitará en el Avance 2.
+          <p className="form-note" role={error ? "alert" : "status"}>
+            {error || (busy ? "Verificando credenciales…" : location.state?.notice || "")}
           </p>
         </form>
         <p className="form-switch">
