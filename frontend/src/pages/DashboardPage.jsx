@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export function DashboardPage() {
@@ -27,10 +27,7 @@ export function DashboardPage() {
       <h1>Hola, {user?.nombres || "bienvenido"}.</h1>
       <p className="form-intro">Desde aquí puedes consultar los recursos de la plataforma.</p>
       {error && <p className="form-note" role="alert">{error}</p>}
-      <div className="dashboard-links">
-        <Link className="button button-primary" to="/inventario">Ver inventario</Link>
-        <Link className="button button-outline" to="/archivos">Archivos multimedia</Link>
-      </div>
+      <p className="form-note">Las funciones de inventario y archivos estarán disponibles en las siguientes etapas.</p>
       <button className="button button-outline dashboard-logout" type="button" onClick={handleLogout} disabled={busy}>
         {busy ? "Cerrando sesión…" : "Cerrar sesión"}
       </button>

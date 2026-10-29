@@ -32,7 +32,6 @@ export function Layout() {
           {user ? (
             <>
               <NavLink to="/dashboard">Panel</NavLink>
-              <NavLink to="/inventario">Inventario</NavLink>
               <button className="nav-logout" type="button" onClick={handleLogout}>Salir</button>
             </>
           ) : (
