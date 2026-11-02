@@ -1,36 +1,36 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { estadoRedireccion } from "../components/ProtectedRoute.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
 
   async function handleLogout() {
-    setError("");
     setBusy(true);
-    try {
-      await logout();
-      navigate("/login", { replace: true });
-    } catch (requestError) {
-      setError(requestError.message || "No se pudo cerrar la sesión. Inténtalo de nuevo.");
-    } finally {
-      setBusy(false);
-    }
+    await logout();
+    navigate("/login", { replace: true, state: estadoRedireccion("logout") });
   }
 
   return (
     <section className="container dashboard-page">
-      <span className="eyebrow">PANEL DE USUARIO</span>
+      <span className="eyebrow">PANEL DE USUARIO · {user?.rol?.toUpperCase()}</span>
       <h1>Hola, {user?.nombres || "bienvenido"}.</h1>
-      <p className="form-intro">Desde aquí puedes consultar los recursos de la plataforma.</p>
-      {error && <p className="form-note" role="alert">{error}</p>}
-      <p className="form-note">Las funciones de inventario y archivos estarán disponibles en las siguientes etapas.</p>
-      <button className="button button-outline dashboard-logout" type="button" onClick={handleLogout} disabled={busy}>
-        {busy ? "Cerrando sesión…" : "Cerrar sesión"}
-      </button>
+      <p className="form-intro">
+        {isAdmin
+          ? "Administra el inventario de equipos: agrega, edita o retira recursos."
+          : "Consulta los equipos disponibles para tus actividades académicas."}
+      </p>
+      <div className="dashboard-links">
+        <Link className="button button-primary" to="/inventario">
+          {isAdmin ? "Gestionar inventario" : "Ver inventario"} <span aria-hidden="true">↗</span>
+        </Link>
+        <button className="button button-outline" type="button" onClick={handleLogout} disabled={busy}>
+          {busy ? "Cerrando sesión…" : "Cerrar sesión"}
+        </button>
+      </div>
     </section>
   );
 }

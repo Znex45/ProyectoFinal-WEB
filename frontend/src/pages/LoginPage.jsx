@@ -1,7 +1,6 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import React, { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { destinoTrasLogin } from "../components/ProtectedRoute.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export function LoginPage() {
@@ -10,6 +9,10 @@ export function LoginPage() {
   const location = useLocation();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+
+  const notice =
+    location.state?.notice ||
+    (location.state?.from ? "Inicia sesión para continuar." : "");
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -21,10 +24,9 @@ export function LoginPage() {
     setBusy(true);
     try {
       await login(correo, password);
-      navigate("/dashboard");
+      navigate(destinoTrasLogin(location), { replace: true });
     } catch (requestError) {
       setError(requestError.message || "No fue posible iniciar sesión.");
-    } finally {
       setBusy(false);
     }
   }
@@ -34,19 +36,14 @@ export function LoginPage() {
       <div className="auth-aside">
         <span className="eyebrow">ACCESO A LA PLATAFORMA</span>
         <h1>Bienvenido de nuevo.</h1>
-        <p>
-          Pronto podrás gestionar solicitudes y consultar el inventario desde
-          aquí.
-        </p>
+        <p>Consulta el inventario de equipos audiovisuales y gestiona tus recursos desde aquí.</p>
         <div className="aside-line" />
         <span>Préstamos UAO · Proyecto académico</span>
       </div>
       <div className="auth-card">
         <span className="eyebrow">INICIAR SESIÓN</span>
         <h2>Ingresa a tu cuenta</h2>
-        <p className="form-intro">
-          Utiliza tu correo institucional y contraseña.
-        </p>
+        <p className="form-intro">Utiliza tu correo institucional y contraseña.</p>
         <form onSubmit={handleSubmit}>
           <label htmlFor="login-email">Correo electrónico</label>
           <input
@@ -65,13 +62,12 @@ export function LoginPage() {
             placeholder="Ingresa tu contraseña"
             autoComplete="current-password"
             required
-            minLength="8"
           />
           <button className="button button-primary form-submit" type="submit" disabled={busy}>
             {busy ? "Ingresando…" : "Ingresar"} <span aria-hidden="true">↗</span>
           </button>
-          <p className="form-note" role={error ? "alert" : "status"}>
-            {error || (busy ? "Verificando credenciales…" : location.state?.notice || "")}
+          <p className={`form-note${error ? " form-error" : ""}`} role={error ? "alert" : "status"}>
+            {error || (busy ? "Verificando credenciales…" : notice)}
           </p>
         </form>
         <p className="form-switch">
