@@ -101,3 +101,11 @@ CREATE TABLE IF NOT EXISTS archivo_multimedia (
   INDEX idx_archivo_equipo (id_equipo),
   INDEX idx_archivo_autor (id_usuario_carga)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Sesiones de express-session (login). La API también la crea si no existe.
+CREATE TABLE IF NOT EXISTS sessions (
+  session_id VARCHAR(128) COLLATE utf8mb4_bin NOT NULL PRIMARY KEY,
+  expires INT UNSIGNED NOT NULL,
+  data MEDIUMTEXT COLLATE utf8mb4_bin,
+  INDEX idx_sessions_expires (expires)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

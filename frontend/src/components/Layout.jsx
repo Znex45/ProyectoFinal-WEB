@@ -1,21 +1,15 @@
 import React from "react";
-import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { estadoRedireccion } from "./ProtectedRoute.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [logoutError, setLogoutError] = useState("");
 
   async function handleLogout() {
-    setLogoutError("");
-    try {
-      await logout();
-      navigate("/login", { replace: true });
-    } catch (error) {
-      setLogoutError(error.message || "No se pudo cerrar la sesión. Inténtalo de nuevo.");
-    }
+    await logout();
+    navigate("/login", { replace: true, state: estadoRedireccion("logout") });
   }
 
   return (
@@ -32,16 +26,20 @@ export function Layout() {
           {user ? (
             <>
               <NavLink to="/dashboard">Panel</NavLink>
-              <button className="nav-logout" type="button" onClick={handleLogout}>Salir</button>
+              <NavLink to="/inventario">Inventario</NavLink>
+              <button className="nav-logout" type="button" onClick={handleLogout}>
+                Salir
+              </button>
             </>
           ) : (
             <>
               <NavLink to="/login">Ingresar</NavLink>
-              <NavLink className="nav-cta" to="/registro">Crear cuenta</NavLink>
+              <NavLink className="nav-cta" to="/registro">
+                Crear cuenta
+              </NavLink>
             </>
           )}
         </nav>
-        {logoutError && <p className="form-note nav-error" role="alert">{logoutError}</p>}
       </header>
       <main>
         <Outlet />

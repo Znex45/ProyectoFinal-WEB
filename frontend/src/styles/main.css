@@ -630,3 +630,11 @@ main {
     width: 100%;
   }
 }
+.form-note.form-error {
+  color: #972d2d;
+  font-weight: 600;
+}
+.route-status {
+  padding-block: 72px;
+  color: #607780;
+}

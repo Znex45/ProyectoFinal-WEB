@@ -12,4 +12,6 @@ export const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 5,
   connectTimeout: 5000,
+  // Las columnas DATE/TIMESTAMP llegan como texto ("2026-01-31") y no se desplazan por zona horaria.
+  dateStrings: true,
 });

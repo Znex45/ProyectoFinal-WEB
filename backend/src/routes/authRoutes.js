@@ -1,12 +1,13 @@
 import { Router } from "express";
-import { register, login, me, logout } from "../controllers/authController.js";
+import { login, logout, me, register } from "../controllers/authController.js";
 import { requireAuth } from "../middleware/requireAuth.js";
+import { validate } from "../middleware/validate.js";
+import { loginSchema, registerSchema } from "../schemas/authSchemas.js";
+import { asyncHandler } from "../utils/http.js";
 
 export const authRoutes = Router();
-const asyncRoute = (handler) => (request, response, next) =>
-  Promise.resolve(handler(request, response)).catch(next);
 
-authRoutes.post("/register", asyncRoute(register));
-authRoutes.post("/login", asyncRoute(login));
+authRoutes.post("/register", validate({ body: registerSchema }), asyncHandler(register));
+authRoutes.post("/login", validate({ body: loginSchema }), asyncHandler(login));
 authRoutes.get("/me", requireAuth, me);
-authRoutes.post("/logout", requireAuth, asyncRoute(logout));
+authRoutes.post("/logout", asyncHandler(logout));

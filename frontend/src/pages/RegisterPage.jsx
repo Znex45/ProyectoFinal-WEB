@@ -1,7 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export function RegisterPage() {
@@ -67,6 +65,7 @@ export function RegisterPage() {
                 name="firstName"
                 autoComplete="given-name"
                 placeholder="Tus nombres"
+                maxLength={100}
                 required
               />
             </div>
@@ -77,6 +76,7 @@ export function RegisterPage() {
                 name="lastName"
                 autoComplete="family-name"
                 placeholder="Tus apellidos"
+                maxLength={100}
                 required
               />
             </div>
@@ -86,6 +86,7 @@ export function RegisterPage() {
             id="register-code"
             name="code"
             placeholder="Tu código"
+            maxLength={50}
             required
           />
           <label htmlFor="register-email">Correo electrónico</label>
@@ -95,6 +96,7 @@ export function RegisterPage() {
             type="email"
             autoComplete="email"
             placeholder="nombre@uao.edu.co"
+            maxLength={190}
             required
           />
           <div className="form-grid">
@@ -132,7 +134,7 @@ export function RegisterPage() {
           <button className="button button-primary form-submit" type="submit" disabled={busy}>
             {busy ? "Creando cuenta…" : "Crear cuenta"} <span aria-hidden="true">↗</span>
           </button>
-          <p className="form-note" role={error ? "alert" : "status"}>
+          <p className={`form-note${error ? " form-error" : ""}`} role={error ? "alert" : "status"}>
             {error || (busy ? "Enviando tus datos…" : "")}
           </p>
         </form>
