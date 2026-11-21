@@ -98,6 +98,8 @@ CREATE TABLE IF NOT EXISTS archivo_multimedia (
   id_usuario_carga INT UNSIGNED NOT NULL,
   CONSTRAINT fk_archivo_equipo FOREIGN KEY (id_equipo) REFERENCES equipo(id_equipo),
   CONSTRAINT fk_archivo_autor FOREIGN KEY (id_usuario_carga) REFERENCES usuario(id_usuario),
+  -- Bases existentes: aplicar database/migrations/20261117_archivos_unique.sql
+  CONSTRAINT uq_archivo_nombre_almacenado UNIQUE (nombre_almacenado),
   INDEX idx_archivo_equipo (id_equipo),
   INDEX idx_archivo_autor (id_usuario_carga)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
