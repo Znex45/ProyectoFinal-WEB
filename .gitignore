@@ -24,3 +24,8 @@ obj/
 
 # Paquetes de preparación locales del equipo
 ENTREGAS_EQUIPO/
+
+# Almacenamiento de archivos subidos (FILE_STORAGE_DIR). En producción va en un volumen persistente.
+backend/storage/
+storage/
+*.upload
