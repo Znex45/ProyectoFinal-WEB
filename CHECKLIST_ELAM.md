@@ -1,0 +1,12 @@
+# Checklist Elam
+- [x] Implementar panel admin y acciones.
+- [x] Integrar rutas, guard, menú y archivos.
+- [x] Montar routers y documentar OpenAPI.
+- [x] Agregar comandos de suites y migraciones; README.
+- [x] Comprobación sintáctica JS y serialización OpenAPI.
+- [ ] Compilar en Windows tras npm install.
+- [ ] Health check y arranque.
+- [ ] Probar admin y estudiante, incluidas rutas directas y estados de equipo.
+- [ ] Suites API/préstamos/archivos en base aislada; probar visibilidad de equipo inactivo.
+- [ ] Migraciones sobre base nueva y copia existente; persistencia archivos tras reinicio.
+- [ ] QA móvil/escritorio, clon limpio, evidencias, revisión y commit/push.

@@ -2,7 +2,7 @@
 
 Aplicación web para organizar el préstamo de cámaras, micrófonos, trípodes, luces y otros recursos de apoyo académico.
 
-**Estado actual:** registro e inicio de sesión integrados con MySQL, sesiones en servidor, rutas públicas y privadas con redirección automática, cierre de sesión, e inventario de equipos (CRUD) con permisos por rol. Las solicitudes de préstamo y la carga de archivos están modeladas en la base, pero aún no tienen API.
+**Estado actual:** registro e inicio de sesión integrados con MySQL, sesiones en servidor, rutas públicas y privadas con redirección automática, cierre de sesión, e inventario de equipos (CRUD) con permisos por rol. Las solicitudes de préstamo y la carga de archivos cuentan con API, navegación y panel administrativo integrados; la regresión completa debe verificarse en una instalación local.
 
 ## Arquitectura y tecnologías
 
@@ -101,6 +101,8 @@ npm run build        # compilación de producción del frontend
 | `/login`, `/registro` | Sólo visitantes | Con sesión activa redirigen a `/dashboard` |
 | `/dashboard` | Privada | Panel del usuario y botón de cerrar sesión |
 | `/inventario` | Privada | Lista de equipos; los administradores pueden crear, editar y eliminar |
+| `/solicitar`, `/mis-solicitudes` | Privada | Crear y consultar solicitudes propias |
+| `/admin/solicitudes` | Administrador | Gestionar estados de solicitudes |
 | `*` | Pública | Página 404 |
 
 - Sin sesión, cualquier ruta privada redirige a `/login` y, tras iniciar sesión, vuelve a la página que se había pedido.
@@ -174,6 +176,27 @@ npm run test:api       # 20 pruebas de extremo a extremo: registro, login, sesi�
 
 `test:api` usa la base configurada en `backend/.env`, crea un usuario y un equipo temporales y los elimina al terminar.
 
-## Alcance pendiente
+## Préstamos y archivos
 
-El esquema ya contempla solicitudes de préstamo (`solicitud_prestamo`, `detalle_solicitud`) y archivos (`archivo_multimedia`). Sus endpoints, el flujo de aprobación y la carga de archivos quedan para las siguientes entregas.
+El solicitante crea una solicitud desde el menú y consulta su historial. El administrador usa Gestión de solicitudes para aprobar, rechazar, cancelar, entregar o finalizar según el estado. El inventario ofrece Ver archivos; sólo el administrador puede subir y eliminar. PNG, JPEG y PDF, máximo 10 MiB por defecto.
+
+- GET/POST `/api/solicitudes`, GET `/api/solicitudes/:id`, PATCH `/api/solicitudes/:id/estado`.
+- GET/POST `/api/archivos`, GET `/api/archivos/:id/visualizar`, GET `/api/archivos/:id/descargar`, DELETE `/api/archivos/:id`.
+- POST de archivos usa multipart: `archivo`, `id_equipo`, `descripcion` y `principal` (opcionales los dos últimos).
+- Consultar Swagger para contratos, permisos y errores.
+
+## Migraciones y almacenamiento
+
+En una base existente respaldada, revisar y aplicar `npm run db:migrate` (migraciones SQL en `database/migrations`). Para una instalación nueva ejecutar `npm run db:init` y luego `npm run db:migrate`. No borrar bases existentes. Configurar `FILE_STORAGE_DIR` en backend/.env (por defecto backend/storage) y `FILE_MAX_BYTES` si hace falta. Respaldar conjuntamente MySQL y el almacenamiento; en producción usar un volumen persistente y HTTPS. No publicar el directorio ni subir los archivos a Git. No se ha configurado un despliegue público.
+
+## Regresión ampliada
+
+En una base de pruebas separada, configurada mediante `DB_NAME` (no la base compartida), ejecutar en PowerShell:
+
+```powershell
+npm run test:prestamos
+npm run test:archivos
+npm run build
+```
+
+Las suites crean y eliminan datos de prueba y la suite de archivos utiliza almacenamiento temporal. Las suites de préstamos y archivos montan servidores propios, por lo que también se debe verificar el servidor integrado con Swagger y con dos sesiones del navegador. Comprobar que un estudiante no puede entrar a /admin/solicitudes, que puede crear una solicitud, que el admin puede completar el ciclo y que los archivos siguen disponibles después de reiniciar. No ejecutar contra datos reales sin aislamiento.

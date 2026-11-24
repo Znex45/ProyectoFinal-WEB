@@ -7,6 +7,8 @@ import { openapi } from "./docs/openapi.js";
 import { sessionMiddleware } from "./middleware/session.js";
 import { authRoutes } from "./routes/authRoutes.js";
 import { equipoRoutes } from "./routes/equipoRoutes.js";
+import { solicitudRoutes } from "./routes/solicitudRoutes.js";
+import { archivoRoutes } from "./routes/archivoRoutes.js";
 import { healthRoutes } from "./routes/healthRoutes.js";
 import { HttpError } from "./utils/http.js";
 
@@ -26,6 +28,8 @@ app.use(["/health", "/api/health"], healthRoutes);
 app.use(sessionMiddleware);
 app.use("/api/auth", authRoutes);
 app.use("/api/equipos", equipoRoutes);
+app.use("/api/solicitudes", solicitudRoutes);
+app.use("/api/archivos", archivoRoutes);
 
 // Ruta inexistente
 app.use((_request, _response, next) => next(new HttpError(404, "Ruta no encontrada")));

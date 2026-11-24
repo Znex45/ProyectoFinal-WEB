@@ -303,3 +303,38 @@ export const openapi = {
     },
   },
 };
+
+// Módulos de préstamos y archivos.
+const estadosPrestamo = ["Pendiente", "Aprobada", "Rechazada", "Cancelada", "En préstamo", "Finalizada"];
+const entero = { type: "integer", minimum: 1 };
+const texto = { type: "string" };
+const fecha = { type: "string", format: "date" };
+const estadoPrestamo = { type: "string", enum: estadosPrestamo };
+const arreglo = items => ({ type: "array", items });
+const objeto = properties => ({ type: "object", properties });
+Object.assign(openapi.components.schemas, {
+  SolicitudEntrada: { ...objeto({ fecha_inicio: fecha, fecha_fin: fecha, observacion: { ...texto, nullable: true, maxLength: 2000 }, equipos: { ...arreglo(entero), minItems: 1, uniqueItems: true } }), required: ["fecha_inicio", "fecha_fin", "equipos"] },
+  Solicitud: objeto({ id_solicitud: entero, id_usuario: entero, solicitante: texto, fecha_solicitud: texto, fecha_inicio: fecha, fecha_fin: fecha, observacion: { ...texto, nullable: true }, nombre_estado: estadoPrestamo, equipos: arreglo(objeto({ id_equipo: entero, nombre: texto })) }),
+  Archivo: objeto({ id_archivo: entero, id_equipo: entero, id_usuario_carga: entero, nombre_original: texto, tipo_mime: texto, tamano_bytes: entero, descripcion: { ...texto, nullable: true }, principal: { type: "boolean" }, fecha_subida: texto, autor: texto, url_visualizar: texto, url_descargar: texto }),
+});
+openapi.tags.push({ name: "Solicitudes" }, { name: "Archivos" });
+const operacion = (tag, summary, responses, extra = {}) => ({ tags: [tag], summary, security: [{ cookieSesion: [] }], responses: { ...responses, 401: err[401] }, ...extra });
+const ok = (schema, description = "Operación exitosa") => ({ description, content: json(dataOf(schema)) });
+const parametro = { ...idParam, description: "Identificador del recurso" };
+const cuerpo = schema => ({ requestBody: { required: true, content: json(schema) } });
+Object.assign(openapi.paths, {
+  "/api/solicitudes": {
+    get: operacion("Solicitudes", "Lista solicitudes propias o todas para administrador", { 200: ok(arreglo(ref("Solicitud"))) }),
+    post: operacion("Solicitudes", "Crea solicitud pendiente", { 201: ok(ref("Solicitud")), 400: err[400], 409: err[409] }, cuerpo(ref("SolicitudEntrada"))),
+  },
+  "/api/solicitudes/{id}": { parameters: [parametro], get: operacion("Solicitudes", "Consulta solicitud visible", { 200: ok(ref("Solicitud")), 400: err[400], 404: err[404] }) },
+  "/api/solicitudes/{id}/estado": { parameters: [parametro], patch: operacion("Solicitudes", "Cambia estado (administrador o cancelación propia)", { 200: ok(ref("Solicitud")), 400: err[400], 403: err[403], 404: err[404], 409: err[409] }, cuerpo({ ...objeto({ estado: estadoPrestamo }), required: ["estado"] })) },
+  "/api/archivos": {
+    get: operacion("Archivos", "Lista metadatos visibles", { 200: ok(arreglo(ref("Archivo"))), 400: err[400], 404: err[404] }, { parameters: [{ name: "equipo_id", in: "query", schema: entero }] }),
+    post: operacion("Archivos", "Sube PNG, JPEG o PDF (administrador)", { 201: ok({ allOf: [ref("Archivo"), objeto({ sha256: texto })] }), 400: err[400], 403: err[403], 413: errorResponse("Archivo demasiado grande"), 415: errorResponse("Tipo no permitido") }, { requestBody: { required: true, content: { "multipart/form-data": { schema: { ...objeto({ archivo: { type: "string", format: "binary" }, id_equipo: entero, descripcion: texto, principal: { type: "boolean" } }), required: ["archivo", "id_equipo"] } } } } }),
+  },
+  "/api/archivos/{id}": { parameters: [parametro], delete: operacion("Archivos", "Elimina archivo (administrador)", { 204: { description: "Eliminado" }, 400: err[400], 403: err[403], 404: err[404] }) },
+});
+for (const accion of ["visualizar", "descargar"]) {
+  openapi.paths[`/api/archivos/{id}/${accion}`] = { parameters: [parametro], get: operacion("Archivos", `${accion} archivo`, { 200: { description: "Contenido binario", content: Object.fromEntries(["image/png", "image/jpeg", "application/pdf"].map(tipo => [tipo, { schema: { type: "string", format: "binary" } }])) }, 400: err[400], 404: err[404] }) };
+}

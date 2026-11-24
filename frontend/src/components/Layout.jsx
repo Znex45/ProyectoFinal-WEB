@@ -27,6 +27,10 @@ export function Layout() {
             <>
               <NavLink to="/dashboard">Panel</NavLink>
               <NavLink to="/inventario">Inventario</NavLink>
+              {user.rol === "Administrador" ? <NavLink to="/admin/solicitudes">Gestión de solicitudes</NavLink> : <>
+                <NavLink to="/solicitar">Solicitar préstamo</NavLink>
+                <NavLink to="/mis-solicitudes">Mis solicitudes</NavLink>
+              </>}
               <button className="nav-logout" type="button" onClick={handleLogout}>
                 Salir
               </button>

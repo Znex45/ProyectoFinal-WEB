@@ -14,7 +14,10 @@
     "db:init": "node database/init.js",
     "health:check": "node scripts/check-health.mjs",
     "db:admin": "node scripts/make-admin.mjs",
-    "test:api": "node scripts/test-api.mjs"
+    "test:api": "node scripts/test-api.mjs",
+    "test:prestamos": "node scripts/test-prestamos.mjs",
+    "test:archivos": "node scripts/test-archivos.mjs",
+    "db:migrate": "node scripts/db-migrate.mjs"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

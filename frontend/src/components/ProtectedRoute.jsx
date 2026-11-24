@@ -34,3 +34,8 @@ export function PublicOnlyRoute() {
   if (user) return <Navigate to={destinoTrasLogin(location)} replace />;
   return <Outlet />;
 }
+
+export function AdminRoute() {
+  const { isAdmin } = useAuth();
+  return isAdmin ? <Outlet /> : <Navigate to="/dashboard" replace />;
+}

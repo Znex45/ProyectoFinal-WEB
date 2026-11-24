@@ -1,0 +1,20 @@
+.admin-solicitudes { padding-block: 2rem; }
+.admin-cabecera { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem; }
+.admin-indicadores { display:grid; grid-template-columns:repeat(auto-fit,minmax(135px,1fr)); gap:.75rem; margin-block:1rem; }
+.admin-indicador { font:inherit; text-align:left; color:inherit; background:#fff; border:1px solid #d9dce2; padding:1rem; border-radius:12px; cursor:pointer; }
+.admin-indicador[aria-pressed=true] { outline:2px solid #a52736; }
+.admin-indicador strong { display:block; font-size:2rem; }
+.admin-filtros { display:flex; flex-wrap:wrap; gap:1rem; margin-block:1.5rem; }
+.admin-filtros label { display:grid; gap:.4rem; flex:1 1 180px; }
+.admin-filtros input,.admin-filtros select { font:inherit; border:1px solid #c7cad1; padding:.65rem; border-radius:8px; width:100%; }
+.admin-tabla-wrap { overflow-x:auto; border:1px solid #d9dce2; border-radius:12px; background:#fff; }
+.admin-tabla { border-collapse:collapse; width:100%; min-width:700px; }
+.admin-tabla th,.admin-tabla td { padding:1rem; text-align:left; vertical-align:top; border-bottom:1px solid #e5e7eb; }
+.admin-tabla th { background:#f3f4f6; }
+.admin-tabla p { margin:.35rem 0; }
+.admin-acciones { display:flex; flex-wrap:wrap; gap:.4rem; }
+.admin-acciones button { font-size:.85rem; padding:.4rem .65rem; }
+.admin-estado { display:inline-block; background:#eef0f3; border-radius:20px; padding:.35rem .65rem; white-space:nowrap; }
+.admin-error,.admin-exito { padding:.75rem; border-radius:8px; }
+.admin-error { color:#9a2431; background:#fff1f2; }
+.admin-exito { color:#21613b; background:#edf9ef; }
