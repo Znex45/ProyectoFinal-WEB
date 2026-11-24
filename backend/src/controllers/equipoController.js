@@ -26,7 +26,7 @@ export async function obtenerCatalogos(_request, response) {
 // GET /api/equipos/:id
 export async function obtenerEquipo(request, response) {
   const equipo = await equipos.findById(request.validated.params.id);
-  if (!equipo) throw new HttpError(404, "Equipo no encontrado");
+  if (!equipo || (!equipo.activo && request.session.user.rol !== "Administrador")) throw new HttpError(404, "Equipo no encontrado");
   response.json({ data: equipo });
 }
 

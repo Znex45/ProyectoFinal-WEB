@@ -13,3 +13,6 @@ export const cancelarSolicitud = (id, options) =>
     body: { estado: "Cancelada" },
     ...options,
   });
+
+export const actualizarEstadoSolicitud = (id, estado) =>
+  api(`/api/solicitudes/${id}/estado`, { method: "PATCH", body: { estado } });

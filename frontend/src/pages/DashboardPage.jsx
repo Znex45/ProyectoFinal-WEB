@@ -27,6 +27,10 @@ export function DashboardPage() {
         <Link className="button button-primary" to="/inventario">
           {isAdmin ? "Gestionar inventario" : "Ver inventario"} <span aria-hidden="true">↗</span>
         </Link>
+        {isAdmin ? <Link className="button button-primary" to="/admin/solicitudes">Gestionar solicitudes</Link> : <>
+          <Link className="button button-primary" to="/solicitar">Solicitar préstamo</Link>
+          <Link className="button button-outline" to="/mis-solicitudes">Mis solicitudes</Link>
+        </>}
         <button className="button button-outline" type="button" onClick={handleLogout} disabled={busy}>
           {busy ? "Cerrando sesión…" : "Cerrar sesión"}
         </button>

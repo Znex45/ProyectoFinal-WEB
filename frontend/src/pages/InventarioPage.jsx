@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { api } from "../services/api.js";
+import { ArchivosEquipo } from "../components/ArchivosEquipo.jsx";
 import "./InventarioPage.css";
 
 const formularioVacio = {
@@ -35,6 +36,7 @@ const aPeticion = (formulario) => ({
 
 export function InventarioPage() {
   const { isAdmin } = useAuth();
+  const [archivoAbierto, setArchivoAbierto] = useState(null);
   const [equipos, setEquipos] = useState([]);
   const [catalogos, setCatalogos] = useState({ categorias: [], estados: [] });
   const [editando, setEditando] = useState(null);
@@ -158,11 +160,15 @@ export function InventarioPage() {
             </thead>
             <tbody>
               {equipos.map((equipo) => (
-                <tr key={equipo.id_equipo} className={equipo.activo ? undefined : "inventario-inactivo"}>
+                <React.Fragment key={equipo.id_equipo}>
+                <tr className={equipo.activo ? undefined : "inventario-inactivo"}>
                   <td>{equipo.codigo_interno}</td>
                   <td>
                     <strong>{equipo.nombre}</strong>
                     <small>{[equipo.marca, equipo.modelo].filter(Boolean).join(" · ")}</small>
+                    <button className="button button-outline" type="button" aria-expanded={archivoAbierto === equipo.id_equipo} onClick={() => setArchivoAbierto(actual => actual === equipo.id_equipo ? null : equipo.id_equipo)}>
+                      {archivoAbierto === equipo.id_equipo ? "Ocultar archivos" : "Ver archivos"}
+                    </button>
                   </td>
                   <td>{equipo.nombre_categoria}</td>
                   <td>
@@ -182,6 +188,8 @@ export function InventarioPage() {
                     </td>
                   )}
                 </tr>
+                {archivoAbierto === equipo.id_equipo && <tr><td colSpan={columnas}><ArchivosEquipo idEquipo={equipo.id_equipo} isAdmin={isAdmin} /></td></tr>}
+                </React.Fragment>
               ))}
               {equipos.length === 0 && (
                 <tr>
